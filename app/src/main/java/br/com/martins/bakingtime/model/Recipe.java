@@ -1,14 +1,20 @@
 package br.com.martins.bakingtime.model;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * Created by Andre Martins dos Santos on 27/05/2018.
  */
-public class Recipe {
+public class Recipe implements Serializable {
 
     private Long id;
     private String name;
     private Integer servings;
     private String image;
+
+    private List<Ingredient> ingredients;
+    private List<Step> steps;
 
     public Recipe(Long id) {
         this.id = id;
@@ -44,6 +50,22 @@ public class Recipe {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<Ingredient> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public List<Step> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<Step> steps) {
+        this.steps = steps;
     }
 
     @Override

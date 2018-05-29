@@ -33,7 +33,7 @@ public final class NetworkUtils {
 
     private static OkHttpClient client = new OkHttpClient();
 
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
+    public static String getJSonResponseFromHttpUrl(URL url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();

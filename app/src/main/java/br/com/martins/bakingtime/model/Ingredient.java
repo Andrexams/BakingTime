@@ -7,7 +7,7 @@ public class Ingredient {
 
     private Long id;
     private Long recipeId;
-    private Integer quantity;
+    private Double quantity;
     private String measure;
     private String name;
 
@@ -24,11 +24,11 @@ public class Ingredient {
         this.recipeId = recipeId;
     }
 
-    public Integer getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 

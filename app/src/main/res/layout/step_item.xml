@@ -11,12 +11,12 @@
 
         <ImageView android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:background="@android:drawable/ic_menu_edit"
+                   android:background="@android:drawable/ic_menu_info_details"
                    android:layout_gravity="center"/>
 
         <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:id="@+id/tv_recipe_name"
+                  android:id="@+id/tv_step"
                   android:layout_marginLeft="10dp"
                   style="@style/TextAppearance.AppCompat.Large"/>
 

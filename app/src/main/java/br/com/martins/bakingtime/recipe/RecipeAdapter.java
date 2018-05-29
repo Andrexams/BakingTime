@@ -53,13 +53,18 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         public RecipeViewHolder(View itemView) {
             super(itemView);
             mTextViewRecipeName = (TextView) itemView.findViewById(R.id.tv_recipe_name);
-            mTextViewRecipeName.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
         @Override
         public void onClick(View view) {
             int adapterPosition = getAdapterPosition();
             mRecipeAdapterOnClickHandler.onClick(mRecipes.get(adapterPosition));
         }
+    }
+
+    public void setRecipesData(List<Recipe> mRecipesData) {
+        mRecipes = mRecipesData;
+        notifyDataSetChanged();
     }
 
     public interface RecipeAdapterOnClickHandler{

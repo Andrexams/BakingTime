@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Baking Time</string>
+    <string name="no_results">Recipes not found</string>
 </resources>

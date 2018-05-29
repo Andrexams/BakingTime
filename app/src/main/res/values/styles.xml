@@ -12,4 +12,8 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="LargeText">
+        <item name="android:textSize">24sp</item>
+    </style>
+
 </resources>
