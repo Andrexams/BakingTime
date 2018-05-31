@@ -5,23 +5,12 @@ package br.com.martins.bakingtime.model;
  */
 public class Ingredient {
 
-    private Long id;
-    private Long recipeId;
     private Double quantity;
     private String measure;
-    private String name;
+    private String ingredient;
 
-    public Ingredient(Long id, Long recipeId) {
-        this.id = id;
-        this.recipeId = recipeId;
-    }
+    public Ingredient() {
 
-    public Long getRecipeId() {
-        return recipeId;
-    }
-
-    public void setRecipeId(Long recipeId) {
-        this.recipeId = recipeId;
     }
 
     public Double getQuantity() {
@@ -40,36 +29,23 @@ public class Ingredient {
         this.measure = measure;
     }
 
-    public String getName() {
-        return name;
+    public String getIngredient() {
+        return ingredient;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setIngredient(String ingredient) {
+        this.ingredient = ingredient;
     }
 
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof Ingredient){
             Ingredient ingredient = (Ingredient)obj;
-            if(ingredient.getId().equals(this.getId()) &&
-                    ingredient.getRecipeId().equals(this.getRecipeId())){
+            if(ingredient.getIngredient().equals(this.getIngredient())){
                 return true;
             }
         }
         return false;
     }
 
-    @Override
-    public int hashCode() {
-        return (int)(id + recipeId * Integer.MAX_VALUE);
-    }
 }

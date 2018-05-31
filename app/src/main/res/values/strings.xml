@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Baking Time</string>
     <string name="no_results">Recipes not found</string>
+    <string name="error">Sorry, an error ocurred. Please try again.</string>
+    <string name="next">Next</string>
+    <string name="prev">Previous</string>
 </resources>

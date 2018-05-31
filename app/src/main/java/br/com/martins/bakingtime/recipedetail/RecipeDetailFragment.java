@@ -23,6 +23,7 @@ import br.com.martins.bakingtime.data.RecipeRamRepository;
 import br.com.martins.bakingtime.data.Repository;
 import br.com.martins.bakingtime.model.Ingredient;
 import br.com.martins.bakingtime.model.Step;
+import br.com.martins.bakingtime.step.StepDetailActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -48,6 +49,8 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAd
 
     private StepAdapter mStepAdapter;
 
+    private static Long recipeId;
+
     private static final String RV_RECIPE_DETAIL_LAYOUT_STATE = "RV_RECIPE_LAYOUT_STATE";
     private Parcelable savedRecyclerLayoutState;
 
@@ -72,19 +75,19 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAd
 
         Intent intent = getActivity().getIntent();
         if(intent.hasExtra(RecipeDetailActivity.RECIPE_ID_EXTRA)){
-            Long recipeId = intent.getLongExtra(RecipeDetailActivity.RECIPE_ID_EXTRA,0);
-            fillAdapter(recipeId);
+            recipeId = intent.getLongExtra(RecipeDetailActivity.RECIPE_ID_EXTRA,0);
+            fillAdapter();
         }
 
         return  rootView;
     }
 
-    private void fillAdapter(Long recipeId) {
+    private void fillAdapter() {
         Repository repository = new RecipeRamRepository();
-        List<Step> listStep = repository.getListStep(recipeId);
-        List<Ingredient> listIngredient = repository.getListIngredient(recipeId);
-        mStepAdapter.setIngredientsData(listIngredient);
-        mStepAdapter.setStepData(listStep);
+        List<Step> stepList = repository.getStepList(recipeId);
+        List<Ingredient> ingredientList = repository.getIngredientList(recipeId);
+        mStepAdapter.setIngredientsData(ingredientList);
+        mStepAdapter.setStepData(stepList);
         if (savedRecyclerLayoutState != null) {
             mRecyclerViewSteps.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
         }
@@ -134,6 +137,9 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAd
 
     @Override
     public void onClick(Step step) {
-
+        Intent intent = new Intent(this.getActivity(),StepDetailActivity.class);
+        intent.putExtra(StepDetailActivity.RECIPE_ID_EXTRA,recipeId);
+        intent.putExtra(StepDetailActivity.STEP_ID_EXTRA,step.getId());
+        startActivity(intent);
     }
 }

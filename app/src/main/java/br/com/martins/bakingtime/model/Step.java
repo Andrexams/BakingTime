@@ -5,24 +5,14 @@ package br.com.martins.bakingtime.model;
  */
 public class Step {
 
-    private Long recipeId;
     private Integer id;
     private String shortDescription;
     private String description;
     private String videoURL;
     private String thumbnailURL;
 
-    public Step(Long recipeId, Integer id) {
-        this.recipeId = recipeId;
+    public Step(Long recipeId) {
         this.id = id;
-    }
-
-    public Long getRecipeId() {
-        return recipeId;
-    }
-
-    public void setRecipeId(Long recipeId) {
-        this.recipeId = recipeId;
     }
 
     public Integer getId() {
@@ -69,8 +59,7 @@ public class Step {
     public boolean equals(Object obj) {
         if (obj instanceof Step) {
             Step step = (Step) obj;
-            if (step.getId().equals(this.getId())
-                    && step.getRecipeId().equals(this.getRecipeId())) {
+            if (step.getId().equals(this.getId())) {
                 return true;
             }
         }

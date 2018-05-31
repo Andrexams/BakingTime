@@ -3,7 +3,6 @@ package br.com.martins.bakingtime.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.martins.bakingtime.data.Repository;
 import br.com.martins.bakingtime.model.Ingredient;
 import br.com.martins.bakingtime.model.Recipe;
 import br.com.martins.bakingtime.model.Step;
@@ -24,12 +23,12 @@ public class RecipeRamRepository implements Repository {
     }
 
     @Override
-    public List<Recipe> getListRecipes() {
+    public List<Recipe> getRecipeList() {
         return mRecipes;
     }
 
     @Override
-    public List<Ingredient> getListIngredient(Long recipeId) {
+    public List<Ingredient> getIngredientList(Long recipeId) {
         for(Recipe recipe : mRecipes){
             if(recipe.getId().equals(recipeId)){
                 return recipe.getIngredients();
@@ -39,12 +38,33 @@ public class RecipeRamRepository implements Repository {
     }
 
     @Override
-    public List<Step> getListStep(Long recipeId) {
+    public List<Step> getStepList(Long recipeId) {
         for(Recipe recipe : mRecipes){
             if(recipe.getId().equals(recipeId)){
                 return recipe.getSteps();
             }
         }
         return new ArrayList<Step>();
+    }
+
+    @Override
+    public Step getStep(Long recipeId,Integer stepId){
+        List<Step> listStep = this.getStepList(recipeId);
+        if(listStep != null){
+            for(Step step : listStep){
+                if(step.getId().equals(stepId)){
+                    return step;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Integer getStepCount(Long recipeId){
+        List<Step> stepList = this.getStepList(recipeId);
+        if(stepList != null){
+            return stepList.size();
+        }
+        return 0;
     }
 }
