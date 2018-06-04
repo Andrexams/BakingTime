@@ -3,9 +3,11 @@ package br.com.martins.bakingtime;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +27,7 @@ import br.com.martins.bakingtime.model.Recipe;
 import br.com.martins.bakingtime.recipe.RecipeAdapter;
 import br.com.martins.bakingtime.data.RecipeRamRepository;
 import br.com.martins.bakingtime.step.StepListActivity;
+import br.com.martins.bakingtime.utils.NetworkUtils;
 import br.com.martins.bakingtime.utils.RecipeApiUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this,getResources().getInteger(R.integer.rw_recipes_columns));
         mRecyclerViewRecipe.setLayoutManager(gridLayoutManager);
         mRecyclerViewRecipe.setHasFixedSize(true);
 
@@ -72,9 +75,16 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
             doRestoreInstanceActions(savedInstanceState);
         }
 
-        //TODO tratar notConnection
-        getSupportLoaderManager().initLoader(1000, null, MainActivity.this);
+        fill();
+    }
 
+    private void fill(){
+        if(NetworkUtils.isConnectOnNetwork(this)){
+            getSupportLoaderManager().initLoader(1000, null, MainActivity.this);
+        }else{
+            showErrorMessage(getString(R.string.no_internet_message));
+            showSnackRetry(this.mFrameLayoutActivity);
+        }
     }
 
     @Override
@@ -184,4 +194,18 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     @Override
     public void onLoaderReset(@NonNull android.support.v4.content.Loader<List<Recipe>> loader) { }
+
+
+    private void showSnackRetry(View parent){
+        Snackbar snackbar = Snackbar
+                .make(parent, "", Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.retry, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        fill();
+                    }
+                });
+        snackbar.setActionTextColor(Color.RED);
+        snackbar.show();
+    }
 }

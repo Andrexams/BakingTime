@@ -6,4 +6,7 @@
     <string name="prev">Previous</string>
     <string name="appwidget_text">No recipe selected</string>
     <string name="add_widget">Add widget</string>
+    <string name="recipe_ingredients">Recipe Ingredients</string>
+    <string name="no_internet_message">There\'s no internet connection.</string>
+    <string name="retry">RETRY</string>
 </resources>

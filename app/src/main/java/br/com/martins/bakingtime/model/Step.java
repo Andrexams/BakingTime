@@ -11,7 +11,7 @@ public class Step {
     private String videoURL;
     private String thumbnailURL;
 
-    public Step(Long recipeId) {
+    public Step(Integer id) {
         this.id = id;
     }
 

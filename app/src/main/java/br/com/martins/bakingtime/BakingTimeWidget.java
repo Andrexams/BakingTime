@@ -19,7 +19,6 @@ public class BakingTimeWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId, Long recipeId) {
 
-        try{
             // Construct the RemoteViews object
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_time_widget);
 
@@ -33,14 +32,10 @@ public class BakingTimeWidget extends AppWidgetProvider {
             Intent intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-            views.setOnClickPendingIntent(R.id.appwidget_ingredients,pendingIntent);
+            views.setOnClickPendingIntent(R.id.appwidget_layout,pendingIntent);
 
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views);
-        }catch (Exception e){
-            e.printStackTrace();;
-        }
-
 
     }
 

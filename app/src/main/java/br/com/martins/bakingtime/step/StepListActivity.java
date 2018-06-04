@@ -80,7 +80,7 @@ public class StepListActivity extends AppCompatActivity implements StepAdapter.S
         Intent intent = getIntent();
         if(intent.hasExtra(RECIPE_ID_EXTRA)){
             recipeId = intent.getLongExtra(RECIPE_ID_EXTRA,0);
-            fillAdapter();
+            fill();
         }
 
         multiPane = findViewById(R.id.ll_sw_group) != null;
@@ -90,11 +90,19 @@ public class StepListActivity extends AppCompatActivity implements StepAdapter.S
         }
     }
 
-    private void fillAdapter() {
+    private void fill() {
         Repository repository = new RecipeRamRepository();
         List<Step> stepList = repository.getStepList(recipeId);
-        List<Ingredient> ingredientList = repository.getIngredientList(recipeId);
-        mStepAdapter.setIngredientsData(ingredientList);
+
+        //Aditional step to store ingredient list
+        Step stepIngredients = new Step(-1);
+        stepIngredients.setShortDescription(getString(R.string.recipe_ingredients));
+        if(!stepList.contains(stepIngredients)){
+            stepList.add(0,stepIngredients);
+        }
+
+        mStepAdapter.setIngredientsData(repository.getIngredientTextList(recipeId));
+
         mStepAdapter.setStepData(stepList);
         if (savedRecyclerLayoutState != null) {
             mRecyclerViewSteps.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
@@ -176,7 +184,7 @@ public class StepListActivity extends AppCompatActivity implements StepAdapter.S
     private void setFirstStepDetail() {
         Repository repository = new RecipeRamRepository();
         List<Step> stepList = repository.getStepList(recipeId);
-        setStep(true,stepList.get(0));
+        setStep(true,stepList.get(1));
     }
 
     @Override

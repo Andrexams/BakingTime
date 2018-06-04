@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="widget_margin">8dp</dimen>
-    <integer name="rw_recipes_columns">1</integer>
+    <integer name="rw_recipes_columns">3</integer>
 </resources>

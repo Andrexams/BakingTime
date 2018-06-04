@@ -39,7 +39,6 @@ public class RecipeRamRepository implements Repository {
         return null;
     }
 
-
     @Override
     public List<Ingredient> getIngredientList(Long recipeId) {
         for(Recipe recipe : mRecipes){
@@ -86,7 +85,7 @@ public class RecipeRamRepository implements Repository {
        StringBuffer textBuff = new StringBuffer();
        if(ingredientList != null){
            for(Ingredient ingredient : ingredientList){
-               textBuff.append(ingredient.toString()).append("\n");
+               textBuff.append("* ").append(ingredient.toString()).append("\n");
            }
        }
        return textBuff.toString();

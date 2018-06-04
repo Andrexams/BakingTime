@@ -15,10 +15,12 @@ import com.google.android.exoplayer2.util.Util;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -88,12 +90,10 @@ public class StepDetailFragment extends Fragment {
         try{
             Repository repository = new RecipeRamRepository();
             Step step = repository.getStep(recipeId,stepId);
-
             if(step.getVideoURL() != null && !step.getVideoURL().equals("")){
                 Uri uri = Uri.parse(step.getVideoURL());
                 initializePlayer(uri);
             }
-
             mTextStepDetail.setText(step.getDescription());
         }catch (Exception e){
             Log.e(TAG,"Error executing fill",e);
@@ -173,4 +173,5 @@ public class StepDetailFragment extends Fragment {
         super.onDestroy();
         releasePlayer();
     }
+
 }
