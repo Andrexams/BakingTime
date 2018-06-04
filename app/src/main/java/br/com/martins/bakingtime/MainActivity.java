@@ -1,5 +1,7 @@
 package br.com.martins.bakingtime;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -10,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -23,8 +24,7 @@ import br.com.martins.bakingtime.data.Repository;
 import br.com.martins.bakingtime.model.Recipe;
 import br.com.martins.bakingtime.recipe.RecipeAdapter;
 import br.com.martins.bakingtime.data.RecipeRamRepository;
-import br.com.martins.bakingtime.recipedetail.RecipeDetailActivity;
-import br.com.martins.bakingtime.recipedetail.RecipeDetailFragment;
+import br.com.martins.bakingtime.step.StepListActivity;
 import br.com.martins.bakingtime.utils.RecipeApiUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +34,7 @@ import android.support.v4.content.Loader;
 public class MainActivity extends AppCompatActivity implements RecipeAdapter.RecipeAdapterOnClickHandler, LoaderManager.LoaderCallbacks<List<Recipe>> {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int ACTION_DETAILS = 1000;
+    private static final String EXTRA_RECIPE_ID = "EXTRA_RECIPE_ID";
 
     @BindView(R.id.rv_recipes)
     RecyclerView mRecyclerViewRecipe;
@@ -120,9 +120,13 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     @Override
     public void onClick(Recipe recipe) {
-        Intent intent = new Intent(this,RecipeDetailActivity.class);
-        intent.putExtra(RecipeDetailActivity.RECIPE_ID_EXTRA,recipe.getId());
+        Intent intent = new Intent(this,StepListActivity.class);
+        intent.putExtra(StepListActivity.RECIPE_ID_EXTRA,recipe.getId());
         startActivity(intent);
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingTimeWidget.class));
+        BakingTimeWidget.updateIngredientsWidget(this, appWidgetManager, appWidgetIds,recipe.getId());
     }
 
     @NonNull

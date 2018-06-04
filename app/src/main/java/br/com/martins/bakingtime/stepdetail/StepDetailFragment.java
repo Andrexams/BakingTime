@@ -1,6 +1,21 @@
-package br.com.martins.bakingtime.step;
+package br.com.martins.bakingtime.stepdetail;
+
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,17 +41,15 @@ public class StepDetailFragment extends Fragment {
     private static final String TAG = StepDetailFragment.class.getSimpleName();
 
     private OnErrorListener mOnErrorListener;
-    interface OnErrorListener {
+    public interface OnErrorListener {
         void onErrorOcurred(Exception e);
-    }
-
-    private OnVideoListener mOnVideoListener;
-    interface OnVideoListener {
-        void onVideo(Exception e);
     }
 
     public static final String RECIPE_ID_SI = "RECIPE_ID_SI";
     public static final String STEP_ID_SI  = "STEP_ID_SI";
+
+    private SimpleExoPlayer mExoPlayer;
+    private SimpleExoPlayerView mPlayerView;
 
     @BindView(R.id.tv_step_detail)
     TextView mTextStepDetail;
@@ -49,6 +62,8 @@ public class StepDetailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
         ButterKnife.bind(this,rootView);
+
+        mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.pv_video_step);
 
         if(savedInstanceState != null){
             doRestoreInstanceActions(savedInstanceState);
@@ -63,7 +78,6 @@ public class StepDetailFragment extends Fragment {
         super.onAttach(context);
         try {
             mOnErrorListener = (OnErrorListener) context;
-            mOnVideoListener = (OnVideoListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnErrorListener,");
@@ -74,11 +88,31 @@ public class StepDetailFragment extends Fragment {
         try{
             Repository repository = new RecipeRamRepository();
             Step step = repository.getStep(recipeId,stepId);
+
+            if(step.getVideoURL() != null && !step.getVideoURL().equals("")){
+                Uri uri = Uri.parse(step.getVideoURL());
+                initializePlayer(uri);
+            }
+
             mTextStepDetail.setText(step.getDescription());
         }catch (Exception e){
             Log.e(TAG,"Error executing fill",e);
             mOnErrorListener.onErrorOcurred(e);
         }
+    }
+
+    private void initializePlayer(Uri mediaUri) {
+
+        TrackSelector trackSelector = new DefaultTrackSelector();
+        LoadControl loadControl = new DefaultLoadControl();
+        mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
+        mPlayerView.setPlayer(mExoPlayer);
+
+        String userAgent = Util.getUserAgent(getActivity(), getString(R.string.app_name));
+        MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+                getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
+        mExoPlayer.prepare(mediaSource);
+        mExoPlayer.setPlayWhenReady(false);
     }
 
     @Override
@@ -124,5 +158,19 @@ public class StepDetailFragment extends Fragment {
 
     public void setRecipeId(Long recipeId) {
         this.recipeId = recipeId;
+    }
+
+    private void releasePlayer() {
+        if(mExoPlayer != null){
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
     }
 }

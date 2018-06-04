@@ -1,17 +1,15 @@
-package br.com.martins.bakingtime.recipedetail;
+package br.com.martins.bakingtime.step;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -23,44 +21,50 @@ import br.com.martins.bakingtime.data.RecipeRamRepository;
 import br.com.martins.bakingtime.data.Repository;
 import br.com.martins.bakingtime.model.Ingredient;
 import br.com.martins.bakingtime.model.Step;
-import br.com.martins.bakingtime.step.StepDetailActivity;
+import br.com.martins.bakingtime.stepdetail.StepDetailActivity;
+import br.com.martins.bakingtime.stepdetail.StepDetailFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * Created by Andre Martins dos Santos on 27/05/2018.
  */
-public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAdapterOnClickHandler {
+public class StepListActivity extends AppCompatActivity implements StepAdapter.StepAdapterOnClickHandler,
+        StepDetailFragment.OnErrorListener{
 
-    private static final String TAG = RecipeDetailFragment.class.getSimpleName();
-    private static final int ACTION_SETEP_DETAILS = 2000;
+    private static final String TAG = StepListActivity.class.getSimpleName();
+    public static final String RECIPE_ID_EXTRA = "RECIPE_ID_EXTRA";
 
-    @BindView(R.id.rv_recipes_detail)
+    @BindView(R.id.rv_step_list)
     RecyclerView mRecyclerViewSteps;
 
-    @BindView(R.id.pb_loading_indicator_detail)
+    @BindView(R.id.pb_loading_indicator_steps)
     ProgressBar mProgressBarLoading;
 
-    @BindView(R.id.tv_error_message_display_detail)
+    @BindView(R.id.tv_error_message_display_steps)
     TextView mTextViewErrorMessage;
 
     @BindView(R.id.fl_main_detail)
     FrameLayout mFrameLayoutActivity;
 
+    private Boolean multiPane;
+
     private StepAdapter mStepAdapter;
 
     private static Long recipeId;
 
-    private static final String RV_RECIPE_DETAIL_LAYOUT_STATE = "RV_RECIPE_LAYOUT_STATE";
+    private static final String RV_STEP_LIST_LAYOUT_STATE = "RV_STEP_LIST_LAYOUT_STATE";
     private Parcelable savedRecyclerLayoutState;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
-        ButterKnife.bind(this,rootView);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_step_list);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(rootView.getContext(), 1);
+        ButterKnife.bind(this);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
         mRecyclerViewSteps.setLayoutManager(gridLayoutManager);
         mRecyclerViewSteps.setHasFixedSize(true);
 
@@ -73,13 +77,17 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAd
             doRestoreInstanceActions(savedInstanceState);
         }
 
-        Intent intent = getActivity().getIntent();
-        if(intent.hasExtra(RecipeDetailActivity.RECIPE_ID_EXTRA)){
-            recipeId = intent.getLongExtra(RecipeDetailActivity.RECIPE_ID_EXTRA,0);
+        Intent intent = getIntent();
+        if(intent.hasExtra(RECIPE_ID_EXTRA)){
+            recipeId = intent.getLongExtra(RECIPE_ID_EXTRA,0);
             fillAdapter();
         }
 
-        return  rootView;
+        multiPane = findViewById(R.id.ll_sw_group) != null;
+
+        if(multiPane && savedInstanceState == null){
+            setFirstStepDetail();
+        }
     }
 
     private void fillAdapter() {
@@ -96,7 +104,7 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAd
     @Override
     public void onSaveInstanceState(Bundle outState) {
         try{
-            outState.putParcelable(RV_RECIPE_DETAIL_LAYOUT_STATE,
+            outState.putParcelable(RV_STEP_LIST_LAYOUT_STATE,
                     mRecyclerViewSteps.getLayoutManager().onSaveInstanceState());
 
         }catch (Exception e){
@@ -107,8 +115,8 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAd
 
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+    public void onRestoreInstanceState(@Nullable Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
         if(savedInstanceState != null)
         {
             doRestoreInstanceActions(savedInstanceState);
@@ -118,7 +126,7 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAd
     private void doRestoreInstanceActions(Bundle savedInstanceState) {
         try{
             savedRecyclerLayoutState = savedInstanceState
-                    .getParcelable(RV_RECIPE_DETAIL_LAYOUT_STATE);
+                    .getParcelable(RV_STEP_LIST_LAYOUT_STATE);
         }catch (Exception e){
             Log.e(TAG,"Error on doRestoreInstanceActions",e);
         }
@@ -137,9 +145,43 @@ public class RecipeDetailFragment extends Fragment implements StepAdapter.StepAd
 
     @Override
     public void onClick(Step step) {
-        Intent intent = new Intent(this.getActivity(),StepDetailActivity.class);
-        intent.putExtra(StepDetailActivity.RECIPE_ID_EXTRA,recipeId);
-        intent.putExtra(StepDetailActivity.STEP_ID_EXTRA,step.getId());
-        startActivity(intent);
+        if(multiPane){
+            setStep(false,step);
+        }else{
+            Intent intent = new Intent(this,StepDetailActivity.class);
+            intent.putExtra(StepDetailActivity.RECIPE_ID_EXTRA,recipeId);
+            intent.putExtra(StepDetailActivity.STEP_ID_EXTRA,step.getId());
+            startActivity(intent);
+        }
     }
+
+    public void setStep(boolean add,Step step){
+
+        StepDetailFragment stepDetailFragment = new StepDetailFragment();
+        stepDetailFragment.setRecipeId(recipeId);
+        stepDetailFragment.setStepId(step.getId());
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if(add){
+            fragmentManager.beginTransaction()
+                    .add(R.id.fl_container, stepDetailFragment)
+                    .commit();
+        }else{
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fl_container, stepDetailFragment)
+                    .commit();
+        }
+    }
+
+    private void setFirstStepDetail() {
+        Repository repository = new RecipeRamRepository();
+        List<Step> stepList = repository.getStepList(recipeId);
+        setStep(true,stepList.get(0));
+    }
+
+    @Override
+    public void onErrorOcurred(Exception e) {
+
+    }
+
 }

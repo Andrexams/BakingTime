@@ -1,4 +1,4 @@
-package br.com.martins.bakingtime.recipedetail;
+package br.com.martins.bakingtime.step;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +11,6 @@ import java.util.List;
 
 import br.com.martins.bakingtime.R;
 import br.com.martins.bakingtime.model.Ingredient;
-import br.com.martins.bakingtime.model.Recipe;
 import br.com.martins.bakingtime.model.Step;
 
 /**

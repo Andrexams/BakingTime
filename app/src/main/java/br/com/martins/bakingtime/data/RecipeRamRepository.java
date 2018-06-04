@@ -27,6 +27,19 @@ public class RecipeRamRepository implements Repository {
         return mRecipes;
     }
 
+    public Recipe getRecipe(Long recipeId){
+        List<Recipe> recipeList = getRecipeList();
+        if(recipeList != null){
+            for(Recipe recipe : recipeList){
+                if(recipe.getId().equals(recipeId)){
+                    return recipe;
+                }
+            }
+        }
+        return null;
+    }
+
+
     @Override
     public List<Ingredient> getIngredientList(Long recipeId) {
         for(Recipe recipe : mRecipes){
@@ -66,5 +79,16 @@ public class RecipeRamRepository implements Repository {
             return stepList.size();
         }
         return 0;
+    }
+
+    public String getIngredientTextList(Long recipeId){
+       List<Ingredient> ingredientList = getIngredientList(recipeId);
+       StringBuffer textBuff = new StringBuffer();
+       if(ingredientList != null){
+           for(Ingredient ingredient : ingredientList){
+               textBuff.append(ingredient.toString()).append("\n");
+           }
+       }
+       return textBuff.toString();
     }
 }

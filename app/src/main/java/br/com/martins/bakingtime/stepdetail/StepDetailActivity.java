@@ -1,6 +1,5 @@
-package br.com.martins.bakingtime.step;
+package br.com.martins.bakingtime.stepdetail;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -17,8 +16,7 @@ import br.com.martins.bakingtime.data.Repository;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StepDetailActivity extends AppCompatActivity implements StepDetailFragment.OnErrorListener,
-        StepDetailFragment.OnVideoListener  {
+public class StepDetailActivity extends AppCompatActivity implements StepDetailFragment.OnErrorListener {
 
     private static final String TAG = StepDetailActivity.class.getSimpleName();
 
@@ -157,7 +155,7 @@ public class StepDetailActivity extends AppCompatActivity implements StepDetailF
     }
 
     private void showStepDataView() {
-        mTextViewErrorMessage.setVisibility(View.INVISIBLE);
+        mTextViewErrorMessage.setVisibility(View.GONE);
         mButtonPrev.setVisibility(View.VISIBLE);
         mButtonNext.setVisibility(View.VISIBLE);
     }
@@ -174,8 +172,4 @@ public class StepDetailActivity extends AppCompatActivity implements StepDetailF
         showErrorMessage(getString(R.string.error));
     }
 
-    @Override
-    public void onVideo(Exception e) {
-
-    }
 }

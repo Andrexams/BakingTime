@@ -48,4 +48,8 @@ public class Ingredient {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return quantity + " " + measure + " of " + ingredient;
+    }
 }

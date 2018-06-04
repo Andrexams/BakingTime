@@ -12,8 +12,10 @@ import br.com.martins.bakingtime.model.Step;
 public interface Repository {
     void persistList(List<Recipe> list);
     List<Recipe> getRecipeList();
+    Recipe getRecipe(Long recipeId);
     List<Ingredient> getIngredientList(Long recipeId);
     List<Step> getStepList(Long recipeId);
     Step getStep(Long recipeId,Integer stepId);
     Integer getStepCount(Long recipeId);
+    String getIngredientTextList(Long recipeId);
 }
