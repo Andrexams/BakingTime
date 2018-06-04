@@ -117,7 +117,7 @@ public class StepDetailActivity extends AppCompatActivity implements StepDetailF
     }
 
     private void configNavButtons() {
-        mButtonNext.setEnabled(stepId.intValue() != (stepCount.intValue() - 1));
+        mButtonNext.setEnabled(stepId.intValue() != (stepCount.intValue() - 2));
         mButtonPrev.setEnabled(stepId.intValue() != 0);
     }
 
