@@ -2,4 +2,5 @@
 <resources>
     <dimen name="widget_margin">8dp</dimen>
     <integer name="rw_recipes_columns">1</integer>
+    <integer name="fl_container_layout_weight">6</integer>
 </resources>

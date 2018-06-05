@@ -130,13 +130,18 @@ public class MainActivity extends AppCompatActivity implements RecipeAdapter.Rec
 
     @Override
     public void onClick(Recipe recipe) {
-        Intent intent = new Intent(this,StepListActivity.class);
-        intent.putExtra(StepListActivity.RECIPE_ID_EXTRA,recipe.getId());
-        startActivity(intent);
+        try{
+            Intent intent = new Intent(this,StepListActivity.class);
+            intent.putExtra(StepListActivity.RECIPE_ID_EXTRA,recipe.getId());
+            startActivity(intent);
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingTimeWidget.class));
-        BakingTimeWidget.updateIngredientsWidget(this, appWidgetManager, appWidgetIds,recipe.getId());
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, BakingTimeWidget.class));
+            BakingTimeWidget.updateIngredientsWidget(this, appWidgetManager, appWidgetIds,recipe.getId());
+        }catch (Exception e){
+            Log.e(TAG,"Error executing onClick",e);
+            showErrorMessage(getString(R.string.error));
+        }
     }
 
     @NonNull

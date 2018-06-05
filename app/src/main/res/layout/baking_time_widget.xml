@@ -6,25 +6,24 @@
               android:background="@color/colorPrimary"
               android:id="@+id/appwidget_layout">
 
-        <TextView android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:id="@+id/appwidget_recipe_name"
-                  android:text="@string/appwidget_text"
-                  android:gravity="center_horizontal"
-                  style="@style/ContentTextItalic"
-                  android:background="@color/colorPrimary"
-                  android:textColor="@android:color/white"/>
+    <TextView android:layout_width="match_parent"
+              android:layout_height="50dp"
+              android:id="@+id/appwidget_recipe_name"
+              android:text="@string/appwidget_text"
+              android:gravity="center"
+              style="@style/ContentTextItalic"
+              android:background="@color/colorPrimary"
+              android:textColor="@android:color/white"/>
 
-                <TextView
-                        android:id="@+id/appwidget_ingredients"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/appwidget_text"
-                        android:gravity="center_horizontal"
-                        android:contentDescription="@string/appwidget_text"
-                        android:background="@android:color/white"
-                        android:layout_marginLeft="4dp"
-                        android:layout_marginRight="4dp"
-                        style="@style/SmallText"/>
+    <TextView
+            android:id="@+id/appwidget_ingredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/appwidget_text"
+            android:contentDescription="@string/appwidget_text"
+            android:background="@android:color/white"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            style="@style/SmallText"/>
 
 </LinearLayout>

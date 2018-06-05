@@ -67,7 +67,7 @@ public class MainActivityScreenTest {
         onView(withId(R.id.rv_recipes)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         //Checks if step list was displayed
-        onView(withId(R.id.fl_main_detail)).check(matches(isDisplayed()));
+        onView(withId(R.id.step_list_fragment)).check(matches(isDisplayed()));
 
         //Check if Recipe ingredients was added
         onView(withId(R.id.rv_step_list))
@@ -83,7 +83,7 @@ public class MainActivityScreenTest {
         onView(withId(R.id.rv_recipes)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
         //Checks if step list was displayed
-        onView(withId(R.id.fl_main_detail)).check(matches(isDisplayed()));
+        onView(withId(R.id.step_list_fragment)).check(matches(isDisplayed()));
 
         //Open first step detail
         onView(withId(R.id.rv_step_list)).perform(RecyclerViewActions.actionOnItemAtPosition(1, click()));

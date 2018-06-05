@@ -18,8 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".step.StepListActivity"/>
+
         <activity android:name=".stepdetail.StepDetailActivity"/>
+        <activity android:name=".step.StepListActivity"/>
 
         <receiver android:name=".BakingTimeWidget">
             <intent-filter>

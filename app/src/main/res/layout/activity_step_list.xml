@@ -1,29 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<fragment
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/step_list_fragment"
+        android:name="br.com.martins.bakingtime.step.StepListFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/fl_main_detail">
-
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_step_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    <ProgressBar
-            android:id="@+id/pb_loading_indicator_steps"
-            android:layout_height="42dp"
-            android:layout_width="42dp"
-            android:layout_gravity="center"
-            android:visibility="invisible" />
-
-    <TextView
-            android:id="@+id/tv_error_message_display_steps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="16dp"
-            android:visibility="gone"
-            style="@style/ContentText"/>
-
-</FrameLayout>
+        android:layout_height="match_parent" />
