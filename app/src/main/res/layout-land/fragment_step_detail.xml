@@ -11,7 +11,14 @@
             android:id="@+id/pv_video_step"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="16dp"/>
+            android:padding="16dp"
+            android:visibility="gone"/>
+
+    <ImageView  android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="16dp"
+                android:visibility="gone"
+                android:id="@+id/iv_step"/>
 
     <TextView
             android:id="@+id/tv_step_detail"

@@ -1,17 +1,24 @@
 package br.com.martins.bakingtime.stepdetail;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
+import com.squareup.picasso.Picasso;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -26,12 +33,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import br.com.martins.bakingtime.R;
 import br.com.martins.bakingtime.data.RecipeRamRepository;
 import br.com.martins.bakingtime.data.Repository;
 import br.com.martins.bakingtime.model.Step;
+import br.com.martins.bakingtime.utils.MediaUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -49,6 +58,8 @@ public class StepDetailFragment extends Fragment {
 
     public static final String RECIPE_ID_SI = "RECIPE_ID_SI";
     public static final String STEP_ID_SI  = "STEP_ID_SI";
+    public static final String PLAYER_POSITION  = "PLAYER_POSITION";
+    public static final String PLAY_WHEN_READY  = "PLAY_WHEN_READY";
 
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
@@ -56,8 +67,14 @@ public class StepDetailFragment extends Fragment {
     @BindView(R.id.tv_step_detail)
     TextView mTextStepDetail;
 
+    @BindView(R.id.iv_step)
+    ImageView mImageViewStep;
+
     private Integer stepId;
     private Long recipeId;
+
+    private Long playerCurrentPosition;
+    private Boolean playWhenReady = Boolean.FALSE;
 
     @Nullable
     @Override
@@ -90,10 +107,20 @@ public class StepDetailFragment extends Fragment {
         try{
             Repository repository = new RecipeRamRepository();
             Step step = repository.getStep(recipeId,stepId);
-            if(step.getVideoURL() != null && !step.getVideoURL().equals("")){
-                Uri uri = Uri.parse(step.getVideoURL());
-                initializePlayer(uri);
+
+            if(MediaUtils.isVideo(step.getVideoURL())){
+                initializePlayer(step.getVideoURL());
+
+            }else if (MediaUtils.isVideo(step.getThumbnailURL())){
+                initializePlayer(step.getThumbnailURL());
+
+            }else if (MediaUtils.isImage(step.getVideoURL())){
+               loadImage(step.getVideoURL());
+
+            }else if (MediaUtils.isImage(step.getThumbnailURL())){
+                loadImage(step.getThumbnailURL());
             }
+
             mTextStepDetail.setText(step.getDescription());
         }catch (Exception e){
             Log.e(TAG,"Error executing fill",e);
@@ -101,8 +128,19 @@ public class StepDetailFragment extends Fragment {
         }
     }
 
-    private void initializePlayer(Uri mediaUri) {
+    private void loadImage(String imgUrl){
+        mImageViewStep.setVisibility(View.VISIBLE);
+        Picasso.with(mImageViewStep.getContext())
+                .load(imgUrl)
+                .into(mImageViewStep);
+    }
 
+
+    private void initializePlayer(String videoUrl) {
+
+        mPlayerView.setVisibility(View.VISIBLE);
+
+        Uri mediaUri = Uri.parse(videoUrl);
         TrackSelector trackSelector = new DefaultTrackSelector();
         LoadControl loadControl = new DefaultLoadControl();
         mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector, loadControl);
@@ -112,7 +150,12 @@ public class StepDetailFragment extends Fragment {
         MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                 getActivity(), userAgent), new DefaultExtractorsFactory(), null, null);
         mExoPlayer.prepare(mediaSource);
-        mExoPlayer.setPlayWhenReady(false);
+
+        boolean restoreState  = playerCurrentPosition != null && playerCurrentPosition.intValue() > 0;
+        if(restoreState){
+            mExoPlayer.seekTo(playerCurrentPosition);
+        }
+        mExoPlayer.setPlayWhenReady(playWhenReady);
     }
 
     @Override
@@ -120,6 +163,12 @@ public class StepDetailFragment extends Fragment {
         try{
             outState.putLong(RECIPE_ID_SI,recipeId);
             outState.putInt(STEP_ID_SI,stepId);
+
+            if(mExoPlayer != null){
+                outState.putLong(PLAYER_POSITION,mExoPlayer.getCurrentPosition());
+                outState.putBoolean(PLAY_WHEN_READY,playWhenReady);
+            }
+
         }catch (Exception e){
             Log.e(TAG,"Error on onSaveInstanceState",e);
         }
@@ -139,6 +188,11 @@ public class StepDetailFragment extends Fragment {
         try{
             recipeId = savedInstanceState.getLong(RECIPE_ID_SI);
             stepId = savedInstanceState.getInt(STEP_ID_SI);
+
+            if(savedInstanceState.get(PLAYER_POSITION) != null){
+                playerCurrentPosition = savedInstanceState.getLong(PLAYER_POSITION);
+                playWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY);
+            }
         }catch (Exception e){
             Log.e(TAG,"Error on doRestoreInstanceActions",e);
         }
@@ -172,6 +226,15 @@ public class StepDetailFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mExoPlayer != null) {
+            playWhenReady = mExoPlayer.getPlayWhenReady();
+            mExoPlayer.setPlayWhenReady(false);
+        }
     }
 
 }
